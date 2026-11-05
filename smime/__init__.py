@@ -1,3 +1,3 @@
-from .signer import load_signature_html, build_mime_message, sign_smime
+from .signer import build_mime_message, load_signature_html, sign_smime
 
-__all__ = ["load_signature_html", "build_mime_message", "sign_smime"]
+__all__ = ["build_mime_message", "load_signature_html", "sign_smime"]

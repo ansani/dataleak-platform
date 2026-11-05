@@ -1,6 +1,5 @@
 """Worker Telegram: scarica documenti dai canali e li pubblica su RabbitMQ."""
 
-from sqlalchemy import text
 
 from telethon.tl.types import Document
 

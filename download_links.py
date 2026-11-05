@@ -11,7 +11,6 @@ text (not only document attachments) and keeps its own cursor state so it can
 run alongside the normal Telegram file downloader.
 """
 
-import asyncio
 import json
 import os
 from datetime import datetime, timezone
@@ -19,8 +18,8 @@ from enum import Enum
 
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
-from telethon.tl.types import PeerChannel
 from telethon import events
+from telethon.tl.types import PeerChannel
 
 import config
 from utils import (

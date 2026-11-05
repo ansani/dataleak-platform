@@ -3,16 +3,15 @@
 from __future__ import annotations
 
 import logging
+import subprocess
+import tempfile
 from copy import deepcopy
 from email import policy
 from email.message import EmailMessage
-import subprocess
-import tempfile
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 from pathlib import Path
-import re
 
 from utils import html_to_text
 

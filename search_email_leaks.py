@@ -6,17 +6,12 @@ Usage: python search_email_leaks.py <email>
 
 import logging
 import sys
-from pathlib import Path
 
 from sqlalchemy import text
 
 from utils import (
-    clean_string,
-    extract_domain,
-    extract_password_patterns,
     extract_uris_from_directory,
     get_db_engine,
-    parse_soft_passwords,
     setup_logging,
     validate_email,
 )

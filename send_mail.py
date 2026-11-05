@@ -15,7 +15,13 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 import config
-from utils import AnalysisManager, get_db_engine, html_to_text, setup_logging, validate_email
+from utils import (
+    AnalysisManager,
+    get_db_engine,
+    html_to_text,
+    setup_logging,
+    validate_email,
+)
 
 setup_logging()  # Configure logging using the function from utils.py
 logger = logging.getLogger(__name__)

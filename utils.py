@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import html
 import json
@@ -8,10 +9,8 @@ import re
 import shutil
 import smtplib
 import subprocess
-import threading
 import time
 import urllib.parse
-import asyncio
 from datetime import datetime, timezone
 from email.mime.text import MIMEText
 from email.parser import HTMLParser
@@ -23,7 +22,7 @@ import dns.resolver
 import pika
 from pika import BasicProperties
 from sqlalchemy import create_engine, text
-from telethon import errors, TelegramClient, events
+from telethon import TelegramClient, errors, events
 from telethon.tl.types import DocumentAttributeFilename
 from tqdm import tqdm
 
