@@ -57,8 +57,6 @@ S""",
 Device details from the infostealer dataset:
 
 - Device: {{device_name}}
-- OS: {{device_os}}
-- Log timestamp: {{log_timestamp}}
 
 These details help identify the device but do not confirm whether it is currently infected.
 
@@ -115,7 +113,6 @@ Available details:
 {{evidence_summary}}
 
 Email: {{affected_email}}
-Log timestamp: {{log_timestamp}}
 
 These findings originate from data associated with infostealer activity. However, the available evidence does not necessarily establish when the original infection occurred or whether the affected device remains compromised.
 
@@ -125,11 +122,11 @@ S""",
 
     "data_infezione": """Hi {{recipient_name}},
 
-The timestamp available in the dataset associated with your email address is:
+Thank you for your reply.
 
-{{log_timestamp}}
+The timestamp associated with this incident will be provided in the device analysis report.
 
-This timestamp may indicate when the information was collected, recorded, or processed, depending on the source.
+Please note that this timestamp may indicate when the information was collected, recorded, or processed, depending on the source.
 
 It does not necessarily represent the exact time when the malware was installed on your device.
 
