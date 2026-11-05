@@ -1,0 +1,50 @@
+import os
+
+# RabbitMQ settings
+# Heartbeat ridotto a 60 secondi per mantenere la connessione attiva
+# blocked_connection_timeout: 300 secondi prima di considerare la connessione bloccata
+# connection_attempts: numero di tentativi di riconnessione
+# retry_delay: tempo di attesa tra i tentativi (secondi)
+#RABBIT_CONNECTION_STRING = 'amqp://dok:Zoroastro1976!@localhost:5673/%2F?heartbeat=60&blocked_connection_timeout=300&connection_attempts=3&retry_delay=2'
+RABBIT_CONNECTION_STRING = 'amqp://dok:Zoroastro1976!@localhost/%2F?heartbeat=60&blocked_connection_timeout=300&connection_attempts=3&retry_delay=2'
+RABBIT_MGMT_USER = 'dok'
+RABBIT_MGMT_PASS = 'Zoroastro1976!'
+RABBIT_MGMT_HOST = 'rabbitmq.kirurusec.com'
+RABBIT_MGMT_PORT = 443
+UNIQUES_QUEUE = 'unique_files'
+PASSWORD_QUEUE = 'password_file'
+SUCCESS_QUEUE = 'uncompressed_file'
+ERROR_QUEUE = 'uncompress_error'
+WRONG_PASSWORD_QUEUE = 'wrong_password'
+OTHER_ERRORS_QUEUE = 'other_decompression_errors'
+SUBDIR_QUEUE = 'subdirectories'
+URI_GOFILE_QUEUE = 'uri_gofile'
+URI_TELEGRAM_QUEUE = 'uri_telegram'
+URI_GENERIC_QUEUE = 'uri_generic'
+COMBO_QUEUE = 'combo_queue'
+
+#DB_CONNECTION_STRING = 'mysql+pymysql://dataleak:Zoroastro1976!@localhost:3307/dumpdb?charset=utf8mb4'
+DB_CONNECTION_STRING = 'mysql+pymysql://dataleak:Zoroastro1976!@localhost:3306/dumpdb?charset=utf8mb4'
+
+# Telethon
+API_ID = '20249148' 
+API_HASH = '466c95811056a3bc498e3062b15e8d06'
+API_PHONE = '+393518047032'
+
+SESSION = os.getenv('TELETHON_SESSION', 'tecnologieufficio_nas_file_downloader')
+DOWNLOAD_DIR = os.getenv('DOWNLOAD_DIR', 'downloads')
+
+# Decompression
+UNCOMPRESS_DIR = 'uncompressed_files'
+PASSWORD_DUMP_DIR = 'password_dumps'
+
+# Postal SMTP settings
+SMTP_HOST_6 = os.getenv('SMTP_HOST', 'postal.kirurusec.com')  # Replace with actual SMTP host
+SMTP_HOST = os.getenv('SMTP_HOST', '141.95.55.188')  # Replace with actual SMTP host
+SMTP_PORT = int(os.getenv('SMTP_PORT', 99))
+SMTP_USER = os.getenv('SMTP_USER', 'kiruru-security/kiruru-mail-server')  # Replace with actual SMTP user
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '1QHRN09nhsY5FmradEDt8wSm')  # Replace with actual SMTP password
+SENDER_EMAIL = os.getenv('SENDER_EMAIL', 's.ansani@kirurusec.com')  # Replace with actual sender email
+SENDER_NAME = os.getenv('SENDER_NAME', 'Salvatore Ansani - Kiruru Security')
+UNSUBSCRIBE_URL = os.getenv('UNSUBSCRIBE_URL', 'https://unsubscribe.kirurusec.com/unsubscribe')
+UNSUBSCRIBE_SECRET = os.getenv('UNSUBSCRIBE_SECRET', 'MaVaffanZumZumZum1976!$')

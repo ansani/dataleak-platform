@@ -1,16 +1,48 @@
+# Virtualenv / environment
 __env__
 .env
 .venv/
 venv/
+
+# Python cache
 *.pyc
+*.pyo
+*.pyd
 __pycache__/
+
+# Databases / SQLite
+*.db
+*.sqlite
 .db
+
+# Certificates / keys / signed mail
 *.p12
 *.pem
 *.key
 *.cert
 *.eml
 *.signed
-*.db
+
+# Logs
+*.log
 logs/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# DataLeakSuperManager pipeline
+downloads/
+downloads
+uncompressed_files/
+uncompressed_files
+db_migrations/
+config.py
+tecnologieufficio_nas_file_downloader.*
+*.session
+
+# Dataleakmail tests
 tests/

@@ -1,5 +1,37 @@
+# ===== Dataleakmail — Data Leak Reply Manager =====
 msal>=1.28.0
 requests>=2.31.0
 pyyaml>=6.0.1
 python-dotenv>=1.0.0
 cryptography>=42.0.0
+
+# ===== DataLeakSuperManager — DataLeak NAS Pipeline =====
+# Database connectivity
+SQLAlchemy>=1.4.0
+PyMySQL>=1.0.0
+
+# RabbitMQ messaging
+pika>=1.3.0
+
+# Telegram API client
+Telethon>=1.28.0
+
+# Progress bars
+tqdm>=4.64.0
+
+# Browser automation for GoFile public folder resolution
+playwright>=1.40.0
+
+# DNS resolution
+dnspython>=2.2.0
+
+# MySQL connector (alternative database driver)
+mysql-connector-python>=8.0.0
+
+# System utilities for archive handling
+# Note: This project also requires 7zip (p7zip-full) to be installed system-wide
+# Install with: sudo apt install p7zip-full
+
+# Browser runtime for Playwright
+# Required after installing Python packages:
+# python -m playwright install chromium

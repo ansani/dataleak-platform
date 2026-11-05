@@ -1,0 +1,201 @@
+Subject: Hey! Quick Heads-Up About Your Security
+
+<html>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+
+<p>
+    Hey!<br>
+    I work as an independent security researcher with <strong>Kiruru Security</strong>.
+    I found something about your email that you might want to know, and I’m just reaching out to help!
+</p>
+
+<p>
+    I came across your email (<strong>{recipient_email}</strong>) in some
+    <strong>online channels that share stolen data</strong>.
+    It looks like a <strong>trojan on your computer</strong> grabbed your usernames and passwords,
+    and they’ve ended up online. No panic—I’m just here to help!
+</p>
+
+<p>
+    Here’s a look at <strong>up to {displayed_password_count} unique examples</strong>
+    of what I found, out of <strong>{total_password_count} total passwords</strong>
+    and <strong>{total_uri_count} total URIs</strong> in the leak.
+    Passwords are masked with asterisks for safety:
+</p>
+
+<ul style="list-style-type: square; margin-left: 20px;">
+    {host_password_list}
+</ul>
+
+<!-- Conditional section for credit cards -->
+
+{credit_card_list}
+
+<p>Here’s what you should do RIGHT NOW:</p>
+
+<ul style="list-style-type: square; margin-left: 20px;">
+    <li>Change your passwords on the sites you use, especially the ones listed above.</li>
+
+```
+<!-- Conditional advice for credit cards -->
+{credit_card_advice}
+
+<li>Turn on two-factor authentication wherever you can—it’s a great way to stay safe.</li>
+<li>Keep an eye on your accounts for anything unusual.</li>
+```
+
+</ul>
+
+<p>
+    If you want to know more or need some help, reach out via email, WhatsApp or Discord.
+    I help for free—it’s just what I do. My contact information is below.
+</p>
+
+<p>
+    Everything I do is completely free, with no catch.
+    If you’d like to buy me a coffee, you can do it on PayPal:
+    <a href="https://paypal.me/ansani"
+       style="color: #0078d4;"
+       target="_blank"
+       rel="noopener">paypal.me/ansani</a>.
+    Only if you want—totally up to you!
+</p>
+
+<p>Take care,</p>
+
+<!-- KiruruSec signature -->
+
+<table cellpadding="0"
+       cellspacing="0"
+       border="0"
+       role="presentation"
+       style="font-family: Arial, Helvetica, sans-serif;
+              font-size: 14px;
+              color: #222222;
+              line-height: 1.4;
+              border-collapse: collapse;">
+    <tbody>
+        <tr>
+            <td style="padding-right: 16px; vertical-align: top;">
+                <a href="https://kirurusec.com/"
+                   style="text-decoration: none;"
+                   target="_blank"
+                   rel="noopener">
+                    <img src="https://kirurusec.com/logo.png"
+                         alt="KiruruSec"
+                         width="96"
+                         style="display: block;
+                                border: 0;
+                                outline: none;
+                                max-width: 96px;
+                                height: auto;">
+                </a>
+            </td>
+        <td style="vertical-align: top;
+                   border-left: 1px solid #dddddd;
+                   padding-left: 16px;">
+
+            <div style="font-size: 16px;
+                        font-weight: bold;
+                        color: #111111;">
+                Salvatore Ansani
+            </div>
+
+            <div style="color: #555555;
+                        padding-bottom: 8px;">
+                Senior Security Researcher
+            </div>
+
+            <div>
+                <strong style="color: #111111;">M:</strong>&nbsp;&nbsp;
+                <a href="tel:+393792558512"
+                   style="color: #222222; text-decoration: none;">
+                    +39 379 255 8512
+                </a>
+            </div>
+
+            <div>
+                <strong style="color: #111111;">E:</strong>&nbsp;&nbsp;
+                <a href="mailto:s.ansani@kirurusec.com"
+                   style="color: #222222; text-decoration: none;">
+                    s.ansani@kirurusec.com
+                </a>
+            </div>
+
+            <div>
+                <strong style="color: #111111;">W:</strong>&nbsp;&nbsp;
+                <a href="https://kirurusec.com/"
+                   style="color: #222222; text-decoration: none;"
+                   target="_blank"
+                   rel="noopener">
+                    kirurusec.com
+                </a>
+            </div>
+
+            <div style="padding-top: 6px; color: #555555;">
+                Italy
+            </div>
+
+            <table cellpadding="0"
+                   cellspacing="0"
+                   border="0"
+                   role="presentation"
+                   style="padding-top: 10px; border-collapse: collapse;">
+                <tbody>
+                    <tr>
+                        <td style="padding-right: 8px;">
+                            <a href="https://discord.gg/gc8MQDxmQh"
+                               style="text-decoration: none;"
+                               target="_blank"
+                               rel="noopener">
+                                <img src="https://img.icons8.com/color/48/discord-logo.png"
+                                     alt="Discord"
+                                     width="22"
+                                     height="22"
+                                     style="display: block;
+                                            border: 0;
+                                            outline: none;">
+                            </a>
+                        </td>
+
+                        <td style="padding-right: 8px;">
+                            <a href="https://it.linkedin.com/in/salvatoreansani"
+                               style="text-decoration: none;"
+                               target="_blank"
+                               rel="noopener">
+                                <img src="https://img.icons8.com/color/48/linkedin.png"
+                                     alt="LinkedIn"
+                                     width="22"
+                                     height="22"
+                                     style="display: block;
+                                            border: 0;
+                                            outline: none;">
+                            </a>
+                        </td>
+
+                        <td>
+                            <a href="https://wa.me/393792558512"
+                               style="text-decoration: none;"
+                               target="_blank"
+                               rel="noopener">
+                                <img src="https://img.icons8.com/color/48/whatsapp--v1.png"
+                                     alt="WhatsApp"
+                                     width="22"
+                                     height="22"
+                                     style="display: block;
+                                            border: 0;
+                                            outline: none;">
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </td>
+    </tr>
+</tbody>
+
+</table>
+
+</body>
+</html>

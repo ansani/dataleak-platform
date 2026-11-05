@@ -1,0 +1,217 @@
+Subject: Your email address appears in a stolen-credential dataset
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Your email address appears in a stolen-credential dataset</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f2;">
+
+<!-- Preheader: la riga mostrata in anteprima nella lista dei messaggi.
+     Senza questo, l'anteprima e' la prima frase del corpo, a caso. -->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#f4f4f2;">
+  No ransom, no threats, no passwords in this email. How to check that this message is really from me, inside.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f2;">
+<tr>
+<td align="center" style="padding:24px 12px;">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+       style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e3e3de;border-radius:8px;">
+<tr>
+<td style="padding:28px 28px 8px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#333333;">
+
+  <p style="margin:0 0 6px;font-size:13px;color:#767570;">
+    KiruruSec &middot; independent security research &middot; victim notification
+  </p>
+
+  <h1 style="margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;font-size:20px;line-height:1.35;font-weight:bold;color:#111111;">
+    Your email address appears in a stolen-credential dataset
+  </h1>
+
+  <p style="margin:0 0 16px;">
+    My name is Salvatore Ansani. I am a solo, independent security researcher, and KiruruSec is not a
+    company &mdash; it is work I do pro bono, in my own time, focused on data leaks. While going through
+    collections of stolen credentials that circulate publicly, I found your address,
+    <strong>{recipient_email}</strong>, among them. So I am writing to you once, directly, to tell you.
+  </p>
+
+  <p style="margin:0 0 16px;">
+    <strong>No ransom, no threats &mdash; just remediation.</strong> I do not sell what I find, I do not
+    charge anyone for these alerts, and there is nothing to buy at the end of this message.
+  </p>
+
+  <h2 style="margin:24px 0 8px;font-size:16px;font-weight:bold;color:#111111;">What I found</h2>
+
+  <p style="margin:0 0 16px;">
+    <strong>It is not only your email address.</strong> The data points to an
+    <strong>infostealer infection on a device you use</strong>, rather than the breach of a single
+    website &mdash; and that kind of malware takes everything the browser had stored. In practice that
+    means your <strong>saved passwords</strong>, your <strong>session cookies</strong>, your
+    <strong>browsing history</strong> and your autofill data &mdash; addresses, phone numbers, sometimes
+    payment details. The dataset links <strong>{total_uri_count} services</strong> to your address.
+  </p>
+
+  <p style="margin:0 0 16px;">
+    The stolen cookies are the part most people underestimate. They are live session keys: with them,
+    someone can open your accounts <strong>without ever needing your password</strong>, and changing
+    that password does not lock them out. This is why the order of the steps below matters so much.
+  </p>
+
+  <p style="margin:0 0 12px;">
+    So that you can see for yourself that this is real, here are some of the services involved &mdash;
+    you should recognise your own accounts among them:
+  </p>
+
+  <ul style="margin:0 0 16px;padding-left:22px;">
+    {host_list}
+  </ul>
+
+  <p style="margin:0 0 16px;">
+    I am listing the sites only. <strong>I am not including any passwords, not even partially
+    masked.</strong> Publishing fragments would raise your risk without helping you act, and it is the
+    pattern extortion emails use to look credible. I do not use it.
+  </p>
+
+  <p style="margin:0 0 16px;font-size:14px;color:#52514e;">
+    Some of the services are deliberately left out of this list, because naming them in an email could
+    reveal something private about you to anyone else who can read this mailbox. Write to me and I will
+    send you the complete list.
+  </p>
+
+  <p style="margin:0 0 16px;">
+    <strong>If you want more proof before you act</strong>, reply to this message and I will describe
+    details of the log that only you could confirm &mdash; which device it came from, and roughly when
+    it was collected. I will not put credentials in an email, not even partially hidden: if malware is
+    still on your machine, it reads your mail too, and I would be handing the attacker a confirmation
+    of what still works.
+  </p>
+
+  <h2 style="margin:24px 0 8px;font-size:16px;font-weight:bold;color:#111111;">What to do, in this order</h2>
+
+  <p style="margin:0 0 10px;">
+    The order is the important part. If malware is still running on the device, changing your passwords
+    first simply hands the attacker the new ones as well.
+  </p>
+
+  <ol style="margin:0 0 16px;padding-left:22px;">
+    <li style="margin-bottom:9px;">
+      <strong>Clean the infected computer first</strong>, or isolate it, before using it for anything
+      else. Until that is done, none of the steps below will hold.
+    </li>
+    <li style="margin-bottom:9px;">
+      <strong>From a clean device</strong>, change the passwords for the exposed accounts, and for any
+      other account where you reused the same password.
+    </li>
+    <li style="margin-bottom:9px;">
+      <strong>Revoke active sessions</strong>, browser sync tokens, saved passwords, API keys and
+      recovery methods. A stolen session cookie survives a password change; revoking it does not.
+    </li>
+    <li style="margin-bottom:9px;">
+      <strong>Enable multi-factor authentication</strong>, preferably with an authenticator app or a
+      hardware key rather than SMS.
+    </li>
+    <li style="margin-bottom:9px;">
+      <strong>Review recent account activity</strong> &mdash; forwarding rules, recovery email, payment
+      methods and connected devices. Attackers often leave a way back in.
+    </li>
+    <li style="margin-bottom:9px;">
+      <strong>Expect phishing that references this leak.</strong> Now that the data is circulating,
+      others will use it too, and some will pretend to be me.
+    </li>
+    <li style="margin-bottom:0;">
+      <strong>Never send passwords</strong>, identity documents, full logs or browser exports through
+      public channels &mdash; not to me, not to anyone.
+    </li>
+  </ol>
+
+  <p style="margin:0 0 16px;">
+    The full version of these steps is published at
+    <a href="https://kirurusec.com/#alert-help" style="color:#0a5ca8;">kirurusec.com/#alert-help</a>.
+  </p>
+
+  <h2 style="margin:24px 0 8px;font-size:16px;font-weight:bold;color:#111111;">How to check this message is really from me</h2>
+
+  <p style="margin:0 0 16px;">
+    A message like this one should make you suspicious &mdash; that instinct is correct, so here is how
+    to settle it. Who I am and how I work is published at
+    <a href="https://kirurusec.com/#about" style="color:#0a5ca8;">kirurusec.com/#about</a>, and the
+    disclosure policy at
+    <a href="https://kirurusec.com/#contact" style="color:#0a5ca8;">kirurusec.com/#contact</a>.
+    Open the site by typing the address yourself rather than following a link in an email &mdash;
+    including this one. This message is also cryptographically signed with the kirurusec.com domain,
+    which most mail providers verify for you.
+  </p>
+
+  <p style="margin:0 0 16px;">
+    <strong>I will never ask you for money, for a password, or for access to your devices.</strong>
+    Any message that does, even if it appears to come from me, is not from me.
+  </p>
+
+  <h2 style="margin:24px 0 8px;font-size:16px;font-weight:bold;color:#111111;">If you want the details, or help</h2>
+
+  <p style="margin:0 0 20px;">
+    Reply to this email, or write to
+    <a href="mailto:s.ansani@kirurusec.com" style="color:#0a5ca8;">s.ansani@kirurusec.com</a>,
+    and I will send you the list of affected services and answer any question about the alert. I keep
+    that list out of this email on purpose: a mailbox can be read by someone other than its owner, and
+    the services a person uses are sensitive in themselves. There is no charge for any of this.
+  </p>
+
+  <!-- Firma senza immagini. I client di posta bloccano le immagini remote per default,
+       quindi una firma costruita su tag immagine si presenta rotta al primo accesso. -->
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+         style="margin-top:8px;border-top:1px solid #e3e3de;width:100%;">
+  <tr>
+  <td style="padding-top:16px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#333333;">
+    <div style="font-size:15px;font-weight:bold;color:#111111;">Salvatore Ansani</div>
+    <div style="color:#52514e;padding-bottom:6px;">Independent security researcher &middot; KiruruSec &middot; Italy</div>
+    <div>E&nbsp;&nbsp;<a href="mailto:s.ansani@kirurusec.com" style="color:#333333;text-decoration:none;">s.ansani@kirurusec.com</a></div>
+    <div>W&nbsp;&nbsp;<a href="https://kirurusec.com/" style="color:#333333;text-decoration:none;">kirurusec.com</a></div>
+    <div>L&nbsp;&nbsp;<a href="https://it.linkedin.com/in/salvatoreansani" style="color:#333333;text-decoration:none;">linkedin.com/in/salvatoreansani</a></div>
+    <div style="padding-top:6px;color:#767570;font-size:13px;">
+      Other contact channels, and when to use which, are listed at
+      <a href="https://kirurusec.com/#contact" style="color:#767570;">kirurusec.com/#contact</a>.
+    </div>
+  </td>
+  </tr>
+  </table>
+
+</td>
+</tr>
+
+<!-- Blocco informativa: fonte dei dati, finalita' e diritti dell'interessato.
+     L'identita' del titolare resta data da nome, email e sito nella firma qui sopra. -->
+<tr>
+<td style="padding:18px 28px 26px;border-top:1px solid #e3e3de;
+           font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#767570;">
+
+  <p style="margin:0 0 10px;">
+    <strong style="color:#52514e;">Where your data comes from, and your rights.</strong>
+    I did not get your address from you. I found it in collections of stolen credentials that circulate
+    publicly, which I analyse in order to warn the people affected &mdash; that is the sole reason I am
+    processing it. I keep only what is needed to send this notice, and I do not retain recoverable
+    passwords. You can ask me what I hold about you, ask me to correct or erase it, or object to this
+    processing, by writing to
+    <a href="mailto:s.ansani@kirurusec.com" style="color:#767570;">s.ansani@kirurusec.com</a>.
+  </p>
+
+  <p style="margin:0;">
+    This is a one-off notice: you are not on a mailing list and you will not hear from me again.
+    To be excluded from any future notification, write to the same address.
+  </p>
+
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
