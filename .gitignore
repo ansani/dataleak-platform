@@ -1,0 +1,16 @@
+__env__
+.env
+.venv/
+venv/
+*.pyc
+__pycache__/
+.db
+*.p12
+*.pem
+*.key
+*.cert
+*.eml
+*.signed
+logs/
+db/
+tests/

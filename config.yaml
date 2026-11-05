@@ -1,0 +1,35 @@
+# Configurazione progetto Data Leak Reply Manager
+
+m365:
+  tenant_id: "${M365_TENANT_ID}"
+  client_id: "${M365_CLIENT_ID}"
+  client_secret: "${M365_CLIENT_SECRET}"
+  username: "${M365_USERNAME}"
+  authority: "https://login.microsoftonline.com/${M365_TENANT_ID}"
+  scopes:
+    - "Mail.Read"
+    - "Mail.ReadWrite"
+    - "Mail.Send"
+  poll_interval_seconds: 300
+  lookback_hours: 24
+  inbox_folder: "Inbox"
+
+nvidia:
+  api_key: "${NVIDIA_API_KEY}"
+  endpoint_url: "${NVIDIA_ENDPOINT_URL}"
+  model: "${NVIDIA_MODEL}"
+  timeout_seconds: 180
+
+smime:
+  cert_path: "${SMIME_CERT_PATH}"
+  cert_password: "${SMIME_CERT_PASSWORD}"
+
+signature:
+  html_path: "${SIGNATURE_HTML_PATH}"
+
+database:
+  path: "${DB_PATH:-./db/processed.db}"
+
+logging:
+  level: "INFO"
+  file: "./logs/app.log"
