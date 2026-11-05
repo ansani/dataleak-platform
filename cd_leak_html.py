@@ -14,11 +14,10 @@ Uso:
   python cd_leak_html.py user@example.com --no-page     # solo frammento <table> (default)
 """
 
-import html
 import sys
 
 from cd_leak import _display_value, find_leak_dirs, guess_pc_name, load_pc_info
-from utils import setup_logging, validate_email
+from utils import escape, setup_logging, validate_email
 
 setup_logging()
 
@@ -92,9 +91,6 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 """
 
 
-def escape(value):
-    """Escape una stringa per l'inserimento sicuro in HTML."""
-    return html.escape(str(value), quote=True)
 
 
 def build_row(email, directory):

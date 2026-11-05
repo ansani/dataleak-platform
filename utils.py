@@ -1,4 +1,5 @@
 import hashlib
+import html
 import json
 import logging
 import os
@@ -2172,3 +2173,8 @@ def extract_uris_from_directory(analyzed_dir: str) -> dict[str, str]:
 
     logger.info(f"Total URIs extracted: {len(hosts_with_password)}")
     return hosts_with_password
+
+
+def escape(value) -> str:
+    """Escape una stringa per l'inserimento sicuro in HTML."""
+    return html.escape(str(value), quote=True)

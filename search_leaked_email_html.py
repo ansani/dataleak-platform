@@ -14,7 +14,6 @@ Usage:
   python search_leaked_email_html.py <email> --no-page     # just the <table> fragment (default)
 """
 
-import html
 import logging
 import sys
 from pathlib import Path
@@ -24,6 +23,7 @@ from sqlalchemy import text
 from cd_leak import _display_value
 from utils import (
     clean_string,
+    escape,
     extract_domain,
     extract_password_patterns,
     extract_uris_from_directory,
@@ -148,9 +148,6 @@ def build_details(email):
     return details
 
 
-def escape(value):
-    """Escape a string for safe insertion into HTML."""
-    return html.escape(str(value), quote=True)
 
 
 def render_table(details):
