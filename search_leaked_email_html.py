@@ -90,15 +90,6 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-_engine = None
-
-
-def get_engine():
-    """Return the SQLAlchemy engine (created lazily on first use)."""
-    global _engine
-    if _engine is None:
-        _engine = get_db_engine()
-    return _engine
 
 
 def mask_password(password):
@@ -122,7 +113,7 @@ def build_details(email):
         LIMIT 100
     """)
 
-    with get_engine().begin() as conn:
+    with get_db_engine().begin() as conn:
         result = conn.execute(search_query, {"email": email})
         rows = result.fetchall()
 

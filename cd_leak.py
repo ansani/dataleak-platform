@@ -267,15 +267,6 @@ _LEADING_DATE_RE = re.compile(r"^\d{4}[._\-]\d{1,2}[._\-]\d{1,2}[_\-\s]*")
 _HOSTNAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{2,31}$")
 
 
-_engine = None
-
-
-def get_engine():
-    """Return the SQLAlchemy engine (created lazily on first use)."""
-    global _engine
-    if _engine is None:
-        _engine = get_db_engine()
-    return _engine
 
 
 def find_leak_dirs(email):
@@ -286,7 +277,7 @@ def find_leak_dirs(email):
         ORDER BY leak_date DESC, analyzed_dir DESC
     """)
 
-    with get_engine().begin() as conn:
+    with get_db_engine().begin() as conn:
         rows = conn.execute(query, {"email": email}).fetchall()
 
     return rows
