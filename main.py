@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import html
 import logging
 import sys
 from typing import Any
 
-import yaml
+import config
+from utils import setup_logging
 
 from m365.auth import build_auth_from_env
 from m365.client import M365Client
@@ -24,48 +24,7 @@ from templates.responses import (
 
 logger = logging.getLogger("datal leak reply")
 
-TEST_RECIPIENT = "salvatoreansani@gmail.com"
-
-
-def _expand_env(value: Any) -> Any:
-    """Espande le variabili ${VAR} ricorsivamente in dict, liste e stringhe."""
-    import os
-    import re
-
-    if isinstance(value, str):
-        def replacer(match: re.Match[str]) -> str:
-            full = match.group(1)
-            if ":-" in full:
-                var, default = full.split(":-", 1)
-                return os.getenv(var, default)
-            return os.getenv(full, match.group(0))
-        return re.sub(r"\$\{([^}]+)\}", replacer, value)
-    if isinstance(value, dict):
-        return {k: _expand_env(v) for k, v in value.items()}
-    if isinstance(value, list):
-        return [_expand_env(v) for v in value]
-    return value
-
-
-def load_config(path: str = "config.yaml") -> dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
-        raw = yaml.safe_load(f)
-    return _expand_env(raw)
-
-
-def setup_logging(level: str = "INFO", log_file: str = "./logs/app.log") -> None:
-    import os
-
-    os.makedirs(os.path.dirname(log_file), exist_ok=True)
-
-    logging.basicConfig(
-        level=getattr(logging, level.upper(), logging.INFO),
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        handlers=[
-            logging.FileHandler(log_file, encoding="utf-8"),
-            logging.StreamHandler(sys.stdout),
-        ],
-    )
+TEST_RECIPIENT = config.TEST_RECIPIENT
 
 
 def extract_sender(msg: dict[str, Any]) -> str:
@@ -327,7 +286,6 @@ def process_email(
 
 
 def run_once(
-    config: dict[str, Any],
     auth,
     classifier: NVIDIAClassifier,
     db: ProcessedDB,
@@ -338,29 +296,30 @@ def run_once(
     """Esegue un singolo ciclo di polling."""
     import os
 
-    m365_cfg = config["m365"]
-    smime_cfg = config["smime"]
-
     token = auth.get_access_token()
     if not token:
         logger.error("Impossibile ottenere access token M365.")
         return
 
-    client = M365Client(access_token=token, username=m365_cfg["username"])
+    client = M365Client(access_token=token, username=config.M365_USERNAME)
 
-    from_addr = m365_cfg["username"]
+    from_addr = config.M365_USERNAME
 
     try:
         messages = client.list_unread(
-            lookback_hours=m365_cfg.get("lookback_hours", 24),
-            top=m365_cfg.get("top", 50),
-            folder=m365_cfg.get("inbox_folder", "Inbox"),
+            lookback_hours=config.M365_LOOKBACK_HOURS,
+            top=50,
+            folder=config.M365_INBOX_FOLDER,
         )
     except Exception as exc:  # noqa: BLE001
         logger.error("Errore recupero email: %s", exc)
         return
 
-    logger.info("Trovate %d email non lette nella casella %s", len(messages), m365_cfg["username"])
+    logger.info(
+        "Trovate %d email non lette nella casella %s",
+        len(messages),
+        config.M365_USERNAME,
+    )
     for i, msg in enumerate(messages):
         logger.debug(
             "Email #%d: id=%s, oggetto='%s', mittente=%s, ricevuta=%s",
@@ -375,8 +334,8 @@ def run_once(
                 classifier=classifier,
                 db=db,
                 signature_html=signature_html,
-                smime_cert_path=smime_cfg["cert_path"],
-                smime_cert_password=smime_cfg["cert_password"],
+                smime_cert_path=config.SMIME_CERT_PATH,
+                smime_cert_password=config.SMIME_CERT_PASSWORD,
                 from_addr=from_addr,
                 original_leak_subject=original_leak_subject,
                 original_leak_body=original_leak_body,
@@ -386,7 +345,6 @@ def run_once(
 
 
 def run_test_mode(
-    config: dict[str, Any],
     auth,
     classifier: NVIDIAClassifier,
     db: ProcessedDB,
@@ -399,21 +357,18 @@ def run_test_mode(
     inviando la risposta a salvatoreansani@gmail.com."""
     import os
 
-    m365_cfg = config["m365"]
-    smime_cfg = config["smime"]
-
     token = auth.get_access_token()
     if not token:
         logger.error("Impossibile ottenere access token M365.")
         return
 
-    client = M365Client(access_token=token, username=m365_cfg["username"])
-    from_addr = m365_cfg["username"]
+    client = M365Client(access_token=token, username=config.M365_USERNAME)
+    from_addr = config.M365_USERNAME
 
     try:
         messages = client.list_messages(
             top=max(numero, 10),
-            folder=m365_cfg.get("inbox_folder", "Inbox"),
+            folder=config.M365_INBOX_FOLDER,
         )
     except Exception as exc:  # noqa: BLE001
         logger.error("Errore recupero email: %s", exc)
@@ -448,8 +403,8 @@ def run_test_mode(
             classifier=classifier,
             db=db,
             signature_html=signature_html,
-            smime_cert_path=smime_cfg["cert_path"],
-            smime_cert_password=smime_cfg["cert_password"],
+            smime_cert_path=config.SMIME_CERT_PATH,
+            smime_cert_password=config.SMIME_CERT_PASSWORD,
             from_addr=from_addr,
             override_to=TEST_RECIPIENT,
             skip_already_processed=False,
@@ -462,10 +417,6 @@ def run_test_mode(
 
 
 def main() -> None:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
     parser = argparse.ArgumentParser(
         description="Data Leak Reply Manager - Gestione risposte automatiche a notifiche di data leak"
     )
@@ -477,28 +428,22 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    config = load_config()
-    setup_logging(
-        level=config.get("logging", {}).get("level", "INFO"),
-        log_file=config.get("logging", {}).get("file", "./logs/app.log"),
-    )
+    setup_logging(level=config.LOG_LEVEL, log_file=config.LOG_FILE)
 
     auth = build_auth_from_env()
 
-    nvidia_cfg = config["nvidia"]
     classifier = NVIDIAClassifier(
-        api_key=nvidia_cfg["api_key"],
-        endpoint_url=nvidia_cfg["endpoint_url"],
-        model=nvidia_cfg["model"],
-        timeout=nvidia_cfg.get("timeout_seconds", 30),
+        api_key=config.NVIDIA_API_KEY,
+        endpoint_url=config.NVIDIA_ENDPOINT_URL,
+        model=config.NVIDIA_MODEL,
+        timeout=config.NVIDIA_TIMEOUT_SECONDS,
     )
 
-    db = ProcessedDB(config["database"]["path"])
-    signature_html = load_signature_html(config["signature"]["html_path"])
+    db = ProcessedDB(config.DB_PATH)
+    signature_html = load_signature_html(config.SIGNATURE_HTML_PATH)
 
     if args.test is not None:
         run_test_mode(
-            config=config,
             auth=auth,
             classifier=classifier,
             db=db,
@@ -507,14 +452,14 @@ def main() -> None:
         )
         return
 
-    poll_interval = config["m365"].get("poll_interval_seconds", 300)
+    poll_interval = config.M365_POLL_INTERVAL_SECONDS
 
     import time
 
     logger.info("Avvio orchestrato data-leak-reply. Poll ogni %ds", poll_interval)
     while True:
         try:
-            run_once(config, auth, classifier, db, signature_html)
+            run_once(auth, classifier, db, signature_html)
         except KeyboardInterrupt:
             logger.info("Interruzione da tastiera, uscita.")
             break

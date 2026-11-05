@@ -166,9 +166,31 @@ def extract_links(text_message: str | None) -> list[str]:
     return links
 
 
-def setup_logging(level=logging.INFO):
+def setup_logging(level=logging.INFO, log_file=None):
+    """Configura il logging per l'applicazione.
 
-    logging.basicConfig(level=level, format="%(asctime)s - %(levelname)s - %(message)s")
+    Args:
+        level: Livello di logging (default da config.LOG_LEVEL).
+        log_file: Percorso file di log (opzionale, da config.LOG_FILE).
+    """
+    import sys
+
+    if level is None:
+        level = getattr(logging, config.LOG_LEVEL.upper(), logging.INFO)
+
+    handlers = [logging.StreamHandler(sys.stdout)]
+    if log_file or config.LOG_FILE:
+        import os
+
+        log_path = log_file or config.LOG_FILE
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        handlers.append(logging.FileHandler(log_path, encoding="utf-8"))
+
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s - %(levelname)s - %(name)s: %(message)s",
+        handlers=handlers,
+    )
     logging.getLogger("telethon").setLevel(logging.ERROR)
     logging.getLogger("pika").setLevel(logging.WARNING)
 
