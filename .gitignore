@@ -11,6 +11,6 @@ __pycache__/
 *.cert
 *.eml
 *.signed
+*.db
 logs/
-db/
 tests/
