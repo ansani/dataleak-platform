@@ -41,6 +41,7 @@ uncompressed_files/
 uncompressed_files
 db_migrations/
 config.py
+config.py.oracle
 tecnologieufficio_nas_file_downloader.*
 *.session
 
