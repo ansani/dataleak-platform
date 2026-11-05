@@ -2109,3 +2109,66 @@ def html_to_text(html: str) -> str:
             prev_blank = False
             clean.append(ln)
     return "\n".join(clean).strip()
+
+
+def extract_uris_from_directory(analyzed_dir: str) -> dict[str, str]:
+    """
+    Extract all URIs from password files in the analyzed directory.
+    Returns a dict with domain as key and password as value.
+    """
+    hosts_with_password: dict[str, str] = {}
+    directory = Path(analyzed_dir)
+
+    if not directory.exists():
+        logger.error(f"Directory not found: {analyzed_dir}")
+        return hosts_with_password
+
+    logger.info(f"Extracting URIs from directory: {analyzed_dir}")
+
+    try:
+        # Find all files in the directory
+        for file_path in directory.rglob("*"):
+            if not file_path.is_file():
+                continue
+
+            file_name = file_path.name.lower()
+
+            # Skip if not a password file
+            if "password" not in file_name:
+                continue
+
+            logger.debug(f"Processing password file: {file_path}")
+
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    content = clean_string(f.read())
+
+                    # Parse SOFT blocks
+                    try:
+                        soft_matches = parse_soft_passwords(content)
+                        logger.debug(
+                            f"Found {len(soft_matches)} SOFT blocks in {file_path}"
+                        )
+                        for host, user, pwd in soft_matches:
+                            domain = extract_domain(host)
+                            hosts_with_password[domain] = clean_string(pwd)
+                            logger.info(f"Extracted from SOFT block: {domain}")
+                    except Exception as e:
+                        logger.error(f"Error parsing SOFT blocks in {file_path}: {e}")
+
+                    # Use centralized pattern extractor for Host:Password and
+                    # fallback
+                    password_matches = extract_password_patterns(content)
+                    for host, pwd in password_matches:
+                        domain = extract_domain(host)
+                        hosts_with_password[domain] = clean_string(pwd)
+                        logger.info(f"Extracted password pattern: {domain}")
+
+            except Exception as e:
+                logger.error(f"Error reading file {file_path}: {e}")
+
+    except Exception as e:
+        logger.error(f"Error processing directory {analyzed_dir}: {e}")
+
+    logger.info(f"Total URIs extracted: {len(hosts_with_password)}")
+    return hosts_with_password
