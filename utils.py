@@ -11,6 +11,7 @@ import subprocess
 import threading
 import time
 import urllib.parse
+import asyncio
 from datetime import datetime, timezone
 from email.mime.text import MIMEText
 from email.parser import HTMLParser
@@ -22,7 +23,7 @@ import dns.resolver
 import pika
 from pika import BasicProperties
 from sqlalchemy import create_engine, text
-from telethon import errors
+from telethon import errors, TelegramClient, events
 from telethon.tl.types import DocumentAttributeFilename
 from tqdm import tqdm
 
@@ -2200,3 +2201,191 @@ def extract_uris_from_directory(analyzed_dir: str) -> dict[str, str]:
 def escape(value) -> str:
     """Escape una stringa per l'inserimento sicuro in HTML."""
     return html.escape(str(value), quote=True)
+
+
+class TelegramBaseWorker:
+    """Classe base per worker Telegram che ascoltano canali in tempo reale.
+
+    Incapsula la logica comune a download.py e download_links.py:
+    - gestione Telethon client e connessione
+    - recupero canali attivi dal DB
+    - catch-up dei messaggi già persi
+    - registrazione/aggiornamento handler eventi
+    - ricarica periodica dei canali ogni ora
+    - loop principale con riconnessione automatica
+
+    Le sottoclassi devono implementare process_message(msg, publisher)
+    e possono sovrascrivere get_publishers() se usano più di una queue.
+    """
+
+    def __init__(
+        self,
+        session: str,
+        api_id: str,
+        api_hash: str,
+        phone: str,
+        state_table: str,
+        state_key_column: str = "channel_id",
+        state_value_column: str = "last_id",
+        channels_loader=None,
+    ):
+        self.session = session
+        self.api_id = api_id
+        self.api_hash = api_hash
+        self.phone = phone
+        self.client = TelegramClient(session, api_id, api_hash)
+        self.state_manager = StateManager(
+            get_db_engine(), state_table, state_key_column, state_value_column
+        )
+        self.channel_names: dict[str, str] = {}
+        self.channels = channels_loader() if channels_loader else []
+        self._client_message_handler = None
+        self.logger = logging.getLogger(self.__class__.__name__)
+
+    def get_publishers(self) -> dict:
+        """Restituisce il mapping queue_name -> RabbitMQPublisher.
+        Da sovrascrivere nelle sottoclassi se necessario."""
+        return {}
+
+    def disable_channel(self, channel_id: str, error_message: str) -> None:
+        from sqlalchemy import text
+
+        try:
+            with self.state_manager.engine.begin() as conn:
+                conn.execute(
+                    text(
+                        "UPDATE channel_list SET status = 'DISABLED', "
+                        "date_removed = NOW() WHERE channel_id = :channel_id"
+                    ),
+                    {"channel_id": channel_id},
+                )
+                self.logger.warning(
+                    "Disabled channel %s due to error: %s", channel_id, error_message
+                )
+        except Exception as e:
+            self.logger.error(
+                "Failed to disable channel %s in database: %s", channel_id, e
+            )
+
+    async def process_message(self, msg, publisher) -> None:
+        """Da implementare nelle sottoclassi."""
+        raise NotImplementedError
+
+    async def catch_up(self, publisher=None) -> None:
+        for chat in self.channels:
+            cid = str(chat)
+            try:
+                ent = await self.client.get_entity(chat)
+                nm = getattr(ent, "title", getattr(ent, "username", cid))
+                self.channel_names[cid] = nm
+            except Exception as e:
+                error_msg = f"Failed to get entity for channel {cid}: {e!s}"
+                self.logger.error(error_msg)
+                self.disable_channel(cid, error_msg)
+                self.channel_names[cid] = cid
+                continue
+            last = int(self.state_manager.get(cid, 0))
+            if last == 0:
+                try:
+                    msgs = await self.client.get_messages(chat, limit=1)
+                    if msgs:
+                        self.state_manager.save(cid, msgs[0].id)
+                        self.logger.info("Seeded %s (ID: %s): %s", nm, cid, msgs[0].id)
+                    continue
+                except Exception as e:
+                    self.logger.error(
+                        "Failed to seed messages for %s (ID: %s): %s", nm, cid, str(e)
+                    )
+                    continue
+            self.logger.info("Catch-up %s (ID: %s) from %s", nm, cid, last)
+            try:
+                async for m in self.client.iter_messages(
+                    chat, min_id=last + 1, reverse=True
+                ):
+                    await self.process_message(m, publisher)
+            except Exception as e:
+                error_msg = f"Error during catch-up for {nm} (ID: {cid}): {e!s}"
+                self.logger.error(error_msg)
+                if (
+                    "channel" in str(e).lower()
+                    or "forbidden" in str(e).lower()
+                    or "not found" in str(e).lower()
+                ):
+                    self.disable_channel(cid, error_msg)
+            self.logger.info("Done %s (ID: %s)", nm, cid)
+
+    def register_message_handler(self, chats_list, publisher=None) -> None:
+        try:
+            if self._client_message_handler is not None:
+                self.client.remove_event_handler(self._client_message_handler)
+        except Exception:
+            pass
+
+        async def _handler(evt):
+            await self.process_message(evt.message, publisher)
+
+        self._client_message_handler = self.client.add_event_handler(
+            _handler, events.NewMessage(chats=chats_list)
+        )
+
+    async def reload_channels_periodically(self, channels_loader, publisher=None) -> None:
+        while True:
+            await asyncio.sleep(3600)
+            new_channels = channels_loader()
+            if new_channels != self.channels:
+                self.logger.info(
+                    "Reloaded channels: %d active channels", len(new_channels)
+                )
+                self.channels = new_channels
+                self.register_message_handler(self.channels, publisher)
+
+    def start_client(self) -> bool:
+        try:
+            self.client.start(phone=self.phone)
+        except errors.ApiIdInvalidError:
+            self.logger.error("Invalid API credentials.")
+            return False
+        self.logger.info("Connected. Starting...")
+        return True
+
+    def run(
+        self,
+        publisher=None,
+        channels_loader=None,
+        extra_handlers=None,
+    ) -> None:
+        if not self.start_client():
+            return
+
+        if channels_loader:
+            self.register_message_handler(self.channels, publisher)
+        else:
+            self.register_message_handler(self.channels, publisher)
+
+        self.client.loop.create_task(self.catch_up(publisher))
+        self.client.loop.create_task(
+            self.reload_channels_periodically(
+                channels_loader or (lambda: self.channels), publisher
+            )
+        )
+
+        if extra_handlers:
+            for handler in extra_handlers:
+                self.client.add_event_handler(*handler)
+
+        import time as _time
+
+        while True:
+            try:
+                self.client.run_until_disconnected()
+                break
+            except (ConnectionError, errors.ConnectionError) as e:
+                self.logger.error(
+                    "Connection to Telegram failed: %s. Retrying in 60 seconds...", e
+                )
+                _time.sleep(60)
+            except Exception as e:
+                self.logger.error(
+                    "Unexpected error in run_until_disconnected: %s", e
+                )
+                _time.sleep(30)
