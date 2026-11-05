@@ -10,13 +10,12 @@ from contextlib import contextmanager
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
-from html.parser import HTMLParser
 
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 import config
-from utils import AnalysisManager, get_db_engine, setup_logging, validate_email
+from utils import AnalysisManager, get_db_engine, html_to_text, setup_logging, validate_email
 
 setup_logging()  # Configure logging using the function from utils.py
 logger = logging.getLogger(__name__)
@@ -48,54 +47,6 @@ def generate_unsubscribe_token(email, secret=UNSUBSCRIBE_SECRET):
     return h.hexdigest()[:16]
 
 
-def html_to_text(html):
-    """Convert the notification HTML body to a readable plain-text version.
-
-    Used for the text/plain MIME alternative so recipients and spam filters
-    see a multipart message instead of an HTML-only one.
-    """
-
-    class _Parser(HTMLParser):
-        def __init__(self):
-            super().__init__()
-            self.out = []
-
-        def handle_starttag(self, tag, attrs):
-            tag = tag.lower()
-            if tag in ("p", "h1", "h2", "h3", "div", "tr", "ul", "ol", "table"):
-                self.out.append("\n")
-            elif tag == "li":
-                self.out.append("\n- ")
-            elif tag == "br":
-                self.out.append("\n")
-
-        def handle_endtag(self, tag):
-            tag = tag.lower()
-            if tag in ("p", "h1", "h2", "h3", "div", "tr", "ul", "ol", "table"):
-                self.out.append("\n")
-
-        def handle_data(self, data):
-            self.out.append(data)
-
-    parser = _Parser()
-    try:
-        parser.feed(html)
-    except ValueError:
-        return ""
-    parser.close()
-
-    lines = [ln.strip() for ln in "".join(parser.out).splitlines()]
-    clean = []
-    prev_blank = False
-    for ln in lines:
-        if not ln:
-            if prev_blank:
-                continue
-            prev_blank = True
-        else:
-            prev_blank = False
-        clean.append(ln)
-    return "\n".join(clean).strip()
 
 
 def build_mime_message(recipient_email, subject, html_content, unsubscribe_url=None):

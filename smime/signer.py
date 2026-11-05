@@ -14,6 +14,8 @@ from email.utils import formatdate, make_msgid
 from pathlib import Path
 import re
 
+from utils import html_to_text
+
 logger = logging.getLogger(__name__)
 
 
@@ -51,14 +53,8 @@ def build_mime_message(
     if references:
         msg["References"] = references
 
-    # Corpo testo semplice (rimuove tag HTML)
-    text_plain = re.sub(r"<[^>]+>", "", body_html)
-    text_plain = re.sub(r"&nbsp;", " ", text_plain)
-    text_plain = re.sub(r"<br\s*/?>", "\n", text_plain)
-    text_plain = re.sub(r"&amp;", "&", text_plain)
-    text_plain = re.sub(r"&lt;", "<", text_plain)
-    text_plain = re.sub(r"&gt;", ">", text_plain)
-    text_plain = re.sub(r"&quot;", '"', text_plain)
+    # Corpo testo semplice (riusa html_to_text da utils per coerenza DRY)
+    text_plain = html_to_text(body_html)
     text_part = MIMEText(text_plain, "plain", "utf-8")
     msg.attach(text_part)
 
