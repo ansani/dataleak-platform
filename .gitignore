@@ -45,3 +45,4 @@ tecnologieufficio_nas_file_downloader.*
 
 # Dataleakmail tests
 tests/
+config.py.oracle
