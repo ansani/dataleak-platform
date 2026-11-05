@@ -304,9 +304,6 @@ class NVIDIAClassifier:
         riscrive migliorando stile, grammatica e chiarezza, senza aggiungere
         informazioni inventate e senza rimuovere i contenuti essenziali.
 
-        Se viene fornita l'email ricevuta, il modello personalizza la risposta
-        basandosi su quanto chiesto dal mittente.
-
         Restituisce il testo definitivo già pronto per l'invio (senza firma,
         che viene aggiunta dopo tramite build_mime_message / sign_smime).
         """
@@ -315,8 +312,13 @@ class NVIDIAClassifier:
 Il tuo compito è riscrivere il testo fornito migliorando solo grammatica, flusso
 e chiarezza, senza aggiungere o rimuovere informazioni.
 
+Il testo è in formato HTML e contiene placeholder nel formato {{nome_variabile}}
+(es. {{recipient_name}}, {{affected_email}}, {{uri_list}}). Questi placeholder
+NON devono essere modificati, rimossi, tradotti o alterati in alcun modo: devono
+rimanere esattamente come sono nel testo di output.
+
 Regole rigide:
-1. Mantieni esattamente tutti i contenuti e fatti presenti nel testo originale del template.
+1. Mantieni esattamente tutti i contenuti e fatti presenti nel testo originale.
 2. Non aggiungere nulla che non sia già nel testo (nessuna informazione nuova, nessun preambolo, nessuna spiegazione extra).
 3. Non rimuovere informazioni importanti.
 4. Mantieni il saluto iniziale e la chiusura "S" esattamente come sono.
@@ -324,10 +326,16 @@ Regole rigide:
 6. Tono professionale, diretto e sintetico. Non espandere il testo: deve rimanere della stessa lunghezza o più breve dell'originale.
 7. Nessun markdown (nessun grassetto, corsivo, liste punteggiate se non già presenti).
 8. Non aggiungere firme, saluti extra o testi oltre a quanto già presente.
-9. Restituisci ESCLUSIVAMENTE il testo riscritto, senza prefissi, postfatti, spiegazioni o blocchi di codice.
-10. Se viene fornita l'email ricevuta, personalizza il testo in modo che risponda direttamente a ciò che l'utente chiede, riferendoti esplicitamente alle sue domande o richieste, senza inventare informazioni.
+9. Non modificare, tradurre o alterare i placeholder {{variable_name}}: devono
+   apparire nel testo di output identici a come sono nel testo di input.
+10. Il testo è HTML: non escapeare i tag HTML, non alterare la struttura HTML.
+11. Restituisci ESCLUSIVAMENTE il testo riscritto, senza prefissi, postfatti,
+    spiegazioni o blocchi di codice.
+12. Se viene fornita l'email ricevuta, personalizza il testo in modo che risponda
+    direttamente a ciò che l'utente chiede, riferendoti esplicitamente alle sue
+    domande o richieste, senza inventare informazioni.
 
-Il testo da riscrivere segue dopo il separatore ---.
+Il testo da riscrivere segue dopo il separatore ---
 """
 
         user_content_parts = [f"---\\n{template_text}"]
